@@ -10,9 +10,7 @@ import glob
 import json
 
 
-def mask_prediction(image:np.ndarray, bbox:(float, float, float, float), mask_net):
-    x, y, w, h = map(int, bbox)
-    image_crop = image[y:y+h, x:x+w]
+def mask_prediction(image_crop:np.ndarray, mask_net):
     face = cv2.cvtColor(image_crop, cv2.COLOR_BGR2RGB)
     face = cv2.resize(face, (224, 224))
     face = img_to_array(face)
@@ -21,8 +19,14 @@ def mask_prediction(image:np.ndarray, bbox:(float, float, float, float), mask_ne
     face = np.expand_dims(face, axis=0)
     preds = mask_net.predict(face, batch_size=32)
 
-    return preds
+    for pred in preds:
+        mask, unmasked = pred
 
+        label = "masked" if mask > unmasked else "unmasked"
+        
+        return label
+
+   
 
 def face_prediction(image_original:np.ndarray, face_net):
     (h, w) = image_original.shape[:2]
