@@ -18,13 +18,3 @@ def race_prediction(image_crop:np.ndarray, race_model):
 
     return y_pred
 
-def detect_skin_tone(detected_face, model):
-    classes = ['dark', 'mid-dark', 'mid-light', 'light']
-
-    detected_face = cv2.resize(detected_face, (120, 90))
-    detected_face = tf.keras.applications.mobilenet_v2.preprocess_input(detected_face[np.newaxis, ...])
-    
-    predictions = model.predict(detected_face)
-    predicted_class_idx = np.argmax(predictions)
-    predicted_class = classes[predicted_class_idx]
-    return predicted_class
