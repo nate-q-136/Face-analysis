@@ -12,18 +12,19 @@ CLASS_MAPPING = [
 
 class EmotionHandler:
 
-    def emotions_predict(self, img_crop):
+    def emotions_predict(self, imgs_crop):
         """
-        return: predicted label matching with face in input face
+        return: predicted labels matching with face in input faces
         """
-        face = [self.standardize_face(img_crop, grayscale=True)]
-        face = np.expand_dims(face, -1)
+        faces = [self.standardize_face(img_crop, grayscale=True)
+                 for img_crop in imgs_crop]
+        faces = np.expand_dims(faces, -1)
         emotion_model = models.load_model(model_path)
-        predictions = emotion_model.predict(face)
+        predictions = emotion_model.predict(faces)
         prediction_indices = np.argmax(predictions, axis=1)
         prediction_labels = [CLASS_MAPPING[prediction_index]
                              for prediction_index in prediction_indices]
-        return prediction_labels[0]
+        return prediction_labels
 
     def standardize_face(self,
                          face,
